@@ -1,0 +1,37 @@
+{
+  "name": "bw-sleep-tracker-pt-be",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+		"server": "nodemon index.js",
+		"start": "node index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sleep-tracker-pt/bw-sleep-tracker-pt-be.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/sleep-tracker-pt/bw-sleep-tracker-pt-be/issues"
+  },
+  "homepage": "https://github.com/sleep-tracker-pt/bw-sleep-tracker-pt-be#readme",
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "cors": "^2.8.5",
+    "dotenv": "^7.0.0",
+    "express": "^4.16.4",
+    "helmet": "^3.16.0",
+    "jest": "^24.7.1",
+    "jsonwebtoken": "^8.5.1",
+    "knex": "^0.16.5",
+    "sqlite3": "^4.0.6"
+  },
+  "devDependencies": {
+    "nodemon": "^1.18.11",
+    "morgan": "^1.9.1"
+  }
+}
