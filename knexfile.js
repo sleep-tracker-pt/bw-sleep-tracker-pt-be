@@ -33,21 +33,13 @@ module.exports = {
 
   production: {
     client: "pg",
-    connection: {
-      database: "d4k99jd8rkd18t",
-      user: "ykimldzoyengoq",
-      password:
-        "3702cb64ba818bc7daafe569eeeec8987d67d2f05c922d4297761019e4f31a25"
-    },
-    pool: {
-      min: 2,
-      max: 10
+    connection: process.env.DATABASE_URL,
     },
     migrations: {
-      directory: "./data/migrations/"
+      directory: __dirname + "./data/migrations/"
     },
     seeds: {
-      directory: "./data/seeds/"
+      directory: __dirname + "./data/seeds/"
     }
   }
 };
