@@ -4,12 +4,14 @@ const helm = require("helmet");
 const morg = require("morgan");
 const authRoute = require("./routes/authentication.js");
 const usersRoute = require("./routes/usersRouter.js");
+const sleepRoute = require("./routes/sleepRoutes.js");
 
 const server = express();
 
 server.use(helm(), express.json(), morg("dev"), cors());
 authRoute(server);
 usersRoute(server);
+sleepRoute(server);
 
 // server.get("/", async (req, res) => {
 //   res.send("home");

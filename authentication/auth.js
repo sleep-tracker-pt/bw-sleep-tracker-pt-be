@@ -9,7 +9,9 @@ module.exports = {
   checkHash,
   register,
   login,
-  authenticate,
+  postAuthenticate,
+  putAuthenticate,
+  getAuthenticate,
   authAllUsers
 };
 
@@ -36,7 +38,67 @@ async function authAllUsers(req, res) {
   }
 }
 
-async function authenticate(req, res, next) {
+async function postAuthenticate(req, res) {
+  const token = req.get("authorize");
+
+  if (token) {
+    jwt.verify(token, jwtKey, (err, decoded) => {
+      if (err) {
+        res.status(401).json(err);
+      }
+
+      req.decoded = decoded;
+      console.log(req.decoded);
+    });
+    try {
+      const user = await db.single_user(req.decoded.username);
+      const { userId } = req.body;
+      if (
+        req.decoded.id === Number(userId) ||
+        req.decoded.username === "admin"
+      ) {
+        const newData = await sleepDb.addSleepData(req.body);
+        res.status(201).json(newData);
+      } else {
+        res.status(400).json({ Error: "Unauthorized" });
+      }
+    } catch (err) {
+      res.status(500).json(err);
+    }
+  }
+}
+
+async function putAuthenticate(req, res) {
+  const token = req.get("authorize");
+
+  if (token) {
+    jwt.verify(token, jwtKey, (err, decoded) => {
+      if (err) {
+        res.status(401).json(err);
+      }
+
+      req.decoded = decoded;
+    });
+    try {
+      const user = await db.single_user(req.decoded.username);
+      const { id } = req.params;
+      const { userID } = req.body;
+      if (
+        req.decoded.id === Number(userID) ||
+        req.decoded.username === "admin"
+      ) {
+        const updatedSleepData = await sleepDb.updateData(id, req.body);
+        res.status(201).json(updatedSleepData);
+      } else {
+        res.status(400).json({ Error: "Unauthorized" });
+      }
+    } catch (err) {
+      res.status(500).json(err);
+    }
+  }
+}
+
+async function getAuthenticate(req, res) {
   const token = req.get("authorize");
 
   if (token) {
