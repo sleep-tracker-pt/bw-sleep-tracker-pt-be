@@ -10,6 +10,7 @@ exports.up = function(knex, Promise) {
     tb.string("start").notNullable();
     tb.string("end").notNullable();
     tb.integer("hours").notNullable();
+    tb.integer("scale").notNullable();
   });
 };
 

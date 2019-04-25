@@ -2,6 +2,7 @@ const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 const jwtKey = process.env.JWT_SECRET || "testing";
 const db = require("../data/models/usersModel.js");
+const sleepDb = require("../data/models/sleepDataModel.js");
 
 module.exports = {
   createHash,
@@ -48,17 +49,18 @@ async function authenticate(req, res, next) {
     });
     try {
       const user = await db.single_user(req.decoded.username);
+      const data = await sleepDb.getDataSingleUser(req.decoded.id);
       const { id } = req.params;
       if (req.decoded.id === Number(id)) {
-        const theUser = { username: user.username };
-        console.log(theUser);
+        const theUser = { username: user.username, sleepData: data };
         res.status(200).json(theUser);
       } else if (
         req.decoded.username === "admin" &&
         req.decoded.role === "admin"
       ) {
         const anotherUser = await db.single_user_by_id(req.params.id);
-        res.status(200).json(anotherUser);
+        const userData = await sleepDb.getDataSingleUser(req.params.id);
+        res.status(200).json({ ...anotherUser, sleepData: userData });
       } else {
         res.status(400).json({ Error: "Unauthorized" });
       }
