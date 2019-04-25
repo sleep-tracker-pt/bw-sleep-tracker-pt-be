@@ -13,8 +13,8 @@ authRoute(server);
 usersRoute(server);
 sleepRoute(server);
 
-// server.get("/", async (req, res) => {
-//   res.send("home");
-// });
+server.get("/", async (req, res) => {
+  res.send("home");
+});
 
 module.exports = server;
