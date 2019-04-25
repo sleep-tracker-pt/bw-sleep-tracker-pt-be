@@ -36,9 +36,9 @@ module.exports = {
     connection: process.env.DATABASE_URL
   },
   migrations: {
-    directory: __dirname + "/app/data/migrations/"
+    directory: __dirname + "/data/migrations"
   },
   seeds: {
-    directory: __dirname + "/app/data/seeds/"
+    directory: __dirname + "/data/seeds"
   }
 };
