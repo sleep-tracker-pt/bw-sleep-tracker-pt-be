@@ -5,8 +5,15 @@ module.exports = {
   single_user,
   single_user_by_id,
   add_user,
-  edit_user
+  edit_user,
+  del_user
 };
+
+function del_user(id) {
+  return db("users")
+    .where("id", id)
+    .del();
+}
 
 function getUsers() {
   return db("users");

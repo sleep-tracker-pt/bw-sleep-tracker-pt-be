@@ -11,9 +11,11 @@ module.exports = {
   register,
   login,
   postAuthenticate,
+  delAuthenticate,
   putAuthenticate,
   getAuthenticate,
   editUserAuthenticate,
+  delUserAuthenticate,
   authAllUsers
 };
 
@@ -27,6 +29,55 @@ async function authAllUsers(req, res) {
         res.status(200).json(allUsers);
       } else {
         res.status(400).json({ Error: "Unauthorized" });
+      }
+    } catch (err) {
+      res.status(500).json(err);
+    }
+  }
+}
+
+async function delUserAuthenticate(req, res) {
+  const token = req.get("authorize");
+  const { id } = req.params;
+  if (token) {
+    try {
+      const verify = await helpers.jwtCheck(token, req, res);
+      const user = await db.single_user_by_id(id);
+      if (user) {
+        if (req.decoded.id === user.id || req.decoded.username === "admin") {
+          const del = await db.del_user(id);
+          res.status(200).json(del);
+        } else {
+          res.status(401).json({ Error: "Not Authorized" });
+        }
+      } else {
+        res.status(400).json({ Error: "The user data does not exist" });
+      }
+    } catch (err) {
+      res.status(500).json(err);
+    }
+  }
+}
+
+async function delAuthenticate(req, res) {
+  const token = req.get("authorize");
+  const { id } = req.params;
+  if (token) {
+    try {
+      const verify = await helpers.jwtCheck(token, req, res);
+      const night = await sleepDb.getSingleNight(id);
+      if (night) {
+        if (
+          req.decoded.id === night.userID ||
+          req.decoded.username === "admin"
+        ) {
+          const del = await sleepDb.delNight(id);
+          res.status(200).json(del);
+        } else {
+          res.status(401).json({ Error: "Not Authorized" });
+        }
+      } else {
+        res.status(400).json({ Error: "The request data does not exist" });
       }
     } catch (err) {
       res.status(500).json(err);
