@@ -10,7 +10,7 @@ exports.seed = function(knex, Promise) {
   for (let i = 0; i < 100; i++) {
     const hoursNumber = randomNumber(5, 15);
     const userNumber = randomNumber(2, 20);
-    const scaleNumber = randomNumber(1, 4);
+    const scaleNumber = randomNumber(1, 5);
     const time = moment();
     time.add(i, "d");
     const anotherTime = moment();
@@ -30,7 +30,7 @@ exports.seed = function(knex, Promise) {
   }
   // Deletes ALL existing entries
   return knex("sleepData")
-    .del()
+    .truncate()
     .then(function() {
       // Inserts seed entries
       return knex("sleepData").insert(data);

@@ -3,6 +3,7 @@ const bcrypt = require("bcryptjs");
 const jwtKey = process.env.JWT_SECRET || "testing";
 const db = require("../data/models/usersModel.js");
 const sleepDb = require("../data/models/sleepDataModel.js");
+const helpers = require("../helpers/helpers.js");
 
 module.exports = {
   createHash,
@@ -12,19 +13,14 @@ module.exports = {
   postAuthenticate,
   putAuthenticate,
   getAuthenticate,
+  editUserAuthenticate,
   authAllUsers
 };
 
 async function authAllUsers(req, res) {
   const token = req.get("authorize");
   if (token) {
-    jwt.verify(token, jwtKey, (err, decoded) => {
-      if (err) {
-        res.status(401).json(err);
-      }
-
-      req.decoded = decoded;
-    });
+    const verify = await helpers.jwtCheck(token, req, res);
     try {
       if (req.decoded.username === "admin" && req.decoded.role === "admin") {
         const allUsers = await db.getUsers();
@@ -42,14 +38,7 @@ async function postAuthenticate(req, res) {
   const token = req.get("authorize");
 
   if (token) {
-    jwt.verify(token, jwtKey, (err, decoded) => {
-      if (err) {
-        res.status(401).json(err);
-      }
-
-      req.decoded = decoded;
-      console.log(req.decoded);
-    });
+    const verify = await helpers.jwtCheck(token, req, res);
     try {
       const user = await db.single_user(req.decoded.username);
       const { userId } = req.body;
@@ -72,13 +61,7 @@ async function putAuthenticate(req, res) {
   const token = req.get("authorize");
 
   if (token) {
-    jwt.verify(token, jwtKey, (err, decoded) => {
-      if (err) {
-        res.status(401).json(err);
-      }
-
-      req.decoded = decoded;
-    });
+    const verify = await helpers.jwtCheck(token, req, res);
     try {
       const user = await db.single_user(req.decoded.username);
       const { id } = req.params;
@@ -102,13 +85,7 @@ async function getAuthenticate(req, res) {
   const token = req.get("authorize");
 
   if (token) {
-    jwt.verify(token, jwtKey, (err, decoded) => {
-      if (err) {
-        res.status(401).json(err);
-      }
-
-      req.decoded = decoded;
-    });
+    const verify = await helpers.jwtCheck(token, req, res);
     try {
       const user = await db.single_user(req.decoded.username);
       const data = await sleepDb.getDataSingleUser(req.decoded.id);
@@ -159,6 +136,28 @@ async function checkHash(pass, userPass) {
     return loginCheck;
   } catch (err) {
     console.log(err);
+  }
+}
+
+async function editUserAuthenticate(req, res) {
+  const token = req.get("authorize");
+  let creds = req.body;
+  if (token) {
+    const verify = await helpers.jwtCheck(token, req, res);
+    const { id } = req.params;
+    if (req.decoded.id === Number(id) || req.decoded.username === admin) {
+      const { password, username } = req.body;
+      try {
+        const hash = await createHash(password, 10);
+        creds.password = hash;
+        console.log(creds.username, creds.password);
+        const editedUser = await db.edit_user(id, creds);
+        console.log(editedUser);
+        res.status(201).json(editedUser);
+      } catch (err) {
+        res.status(500).json(err);
+      }
+    }
   }
 }
 

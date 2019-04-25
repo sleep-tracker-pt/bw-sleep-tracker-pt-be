@@ -11,7 +11,6 @@ function getDataSingleUser(id) {
 }
 
 function updateData(id, data) {
-  console.log(id);
   return db("sleepData")
     .where("id", id)
     .update(data);
