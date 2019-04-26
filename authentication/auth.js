@@ -24,7 +24,7 @@ async function authAllUsers(req, res) {
   if (token) {
     const verify = await helpers.jwtCheck(token, req, res);
     try {
-      if (req.decoded.username === "admin" && req.decoded.role === "admin") {
+      if (req.decoded.role === "admin") {
         const allUsers = await db.getUsers();
         res.status(200).json(allUsers);
       } else {
@@ -33,6 +33,8 @@ async function authAllUsers(req, res) {
     } catch (err) {
       res.status(500).json(err);
     }
+  } else {
+    res.status(400).json({ Error: "Please login / Sign up" });
   }
 }
 
@@ -44,7 +46,7 @@ async function delUserAuthenticate(req, res) {
       const verify = await helpers.jwtCheck(token, req, res);
       const user = await db.single_user_by_id(id);
       if (user) {
-        if (req.decoded.id === user.id || req.decoded.username === "admin") {
+        if (req.decoded.id === user.id || req.decoded.role === "admin") {
           const del = await db.del_user(id);
           res.status(200).json(del);
         } else {
@@ -56,6 +58,8 @@ async function delUserAuthenticate(req, res) {
     } catch (err) {
       res.status(500).json(err);
     }
+  } else {
+    res.status(400).json({ Error: "Please login / Sign up" });
   }
 }
 
@@ -67,10 +71,7 @@ async function delAuthenticate(req, res) {
       const verify = await helpers.jwtCheck(token, req, res);
       const night = await sleepDb.getSingleNight(id);
       if (night) {
-        if (
-          req.decoded.id === night.userID ||
-          req.decoded.username === "admin"
-        ) {
+        if (req.decoded.id === night.userID || req.decoded.role === "admin") {
           const del = await sleepDb.delNight(id);
           res.status(200).json(del);
         } else {
@@ -82,6 +83,8 @@ async function delAuthenticate(req, res) {
     } catch (err) {
       res.status(500).json(err);
     }
+  } else {
+    res.status(400).json({ Error: "Please login / Sign up" });
   }
 }
 
@@ -93,10 +96,7 @@ async function postAuthenticate(req, res) {
     try {
       const user = await db.single_user(req.decoded.username);
       const { userId } = req.body;
-      if (
-        req.decoded.id === Number(userId) ||
-        req.decoded.username === "admin"
-      ) {
+      if (req.decoded.id === Number(userId) || req.decoded.role === "admin") {
         const newData = await sleepDb.addSleepData(req.body);
         res.status(201).json(newData);
       } else {
@@ -105,6 +105,8 @@ async function postAuthenticate(req, res) {
     } catch (err) {
       res.status(500).json(err);
     }
+  } else {
+    res.status(400).json({ Error: "Please login / Sign up" });
   }
 }
 
@@ -117,10 +119,7 @@ async function putAuthenticate(req, res) {
       const user = await db.single_user(req.decoded.username);
       const { id } = req.params;
       const { userID } = req.body;
-      if (
-        req.decoded.id === Number(userID) ||
-        req.decoded.username === "admin"
-      ) {
+      if (req.decoded.id === Number(userID) || req.decoded.role === "admin") {
         const updatedSleepData = await sleepDb.updateData(id, req.body);
         res.status(201).json(updatedSleepData);
       } else {
@@ -129,6 +128,8 @@ async function putAuthenticate(req, res) {
     } catch (err) {
       res.status(500).json(err);
     }
+  } else {
+    res.status(400).json({ Error: "Please login / Sign up" });
   }
 }
 
@@ -144,10 +145,7 @@ async function getAuthenticate(req, res) {
       if (req.decoded.id === Number(id)) {
         const theUser = { username: user.username, sleepData: data };
         res.status(200).json(theUser);
-      } else if (
-        req.decoded.username === "admin" &&
-        req.decoded.role === "admin"
-      ) {
+      } else if (req.decoded.role === "admin") {
         const anotherUser = await db.single_user_by_id(req.params.id);
         const userData = await sleepDb.getDataSingleUser(req.params.id);
         res.status(200).json({ ...anotherUser, sleepData: userData });
@@ -158,7 +156,7 @@ async function getAuthenticate(req, res) {
       res.status(500).json(err);
     }
   } else {
-    return res.status(401).json({});
+    return res.status(401).json({ Error: "Please login / Signup" });
   }
 }
 
@@ -209,6 +207,8 @@ async function editUserAuthenticate(req, res) {
         res.status(500).json(err);
       }
     }
+  } else {
+    res.status(400).json({ Error: "Please login / Sign up" });
   }
 }
 

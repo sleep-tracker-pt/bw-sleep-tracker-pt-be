@@ -7,9 +7,9 @@ const randomNumber = (min, max) => {
 };
 exports.seed = function(knex, Promise) {
   let data = [];
-  for (let i = 0; i < 100; i++) {
+  for (let i = 0; i < 200; i++) {
     const hoursNumber = randomNumber(5, 15);
-    const userNumber = randomNumber(2, 20);
+    const userNumber = randomNumber(3, 24);
     const scaleNumber = randomNumber(1, 5);
     const time = moment();
     time.add(i, "d");
