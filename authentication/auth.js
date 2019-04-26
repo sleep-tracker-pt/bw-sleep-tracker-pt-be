@@ -148,7 +148,11 @@ async function getAuthenticate(req, res) {
       } else if (req.decoded.role === "admin") {
         const anotherUser = await db.single_user_by_id(Number(req.params.id));
         const userData = await sleepDb.getDataSingleUser(Number(req.params.id));
-        res.status(200).json({ ...anotherUser, sleepData: userData });
+        if (anotherUser) {
+          res.status(200).json({ ...anotherUser, sleepData: userData });
+        } else {
+          res.status(400).jsone({ Error: "The user does not exist" });
+        }
       } else {
         res.status(400).json({ Error: "Unauthorized" });
       }
