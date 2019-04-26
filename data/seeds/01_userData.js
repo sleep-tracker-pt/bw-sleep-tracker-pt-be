@@ -49,7 +49,7 @@ exports.seed = async function(knex, Promise) {
     }
   }
   return knex("users")
-    .truncate()
+    .del()
     .then(function() {
       // Inserts seed entries
       return knex("users").insert(users);
