@@ -24,7 +24,7 @@ async function authAllUsers(req, res) {
   if (token) {
     const verify = await helpers.jwtCheck(token, req, res);
     try {
-      if (req.decoded.username === "admin" && req.decoded.role === "admin") {
+      if (req.decoded.role === "admin") {
         const allUsers = await db.getUsers();
         res.status(200).json(allUsers);
       } else {
@@ -33,6 +33,8 @@ async function authAllUsers(req, res) {
     } catch (err) {
       res.status(500).json(err);
     }
+  } else {
+    res.status(400).json({ Error: "Please login / Sign up" });
   }
 }
 
@@ -42,10 +44,10 @@ async function delUserAuthenticate(req, res) {
   if (token) {
     try {
       const verify = await helpers.jwtCheck(token, req, res);
-      const user = await db.single_user_by_id(id);
+      const user = await db.single_user_by_id(Number(id));
       if (user) {
-        if (req.decoded.id === user.id || req.decoded.username === "admin") {
-          const del = await db.del_user(id);
+        if (req.decoded.id === user.id || req.decoded.role === "admin") {
+          const del = await db.del_user(Number(id));
           res.status(200).json(del);
         } else {
           res.status(401).json({ Error: "Not Authorized" });
@@ -56,6 +58,8 @@ async function delUserAuthenticate(req, res) {
     } catch (err) {
       res.status(500).json(err);
     }
+  } else {
+    res.status(400).json({ Error: "Please login / Sign up" });
   }
 }
 
@@ -65,13 +69,10 @@ async function delAuthenticate(req, res) {
   if (token) {
     try {
       const verify = await helpers.jwtCheck(token, req, res);
-      const night = await sleepDb.getSingleNight(id);
+      const night = await sleepDb.getSingleNight(Number(id));
       if (night) {
-        if (
-          req.decoded.id === night.userID ||
-          req.decoded.username === "admin"
-        ) {
-          const del = await sleepDb.delNight(id);
+        if (req.decoded.id === night.userID || req.decoded.role === "admin") {
+          const del = await sleepDb.delNight(Number(id));
           res.status(200).json(del);
         } else {
           res.status(401).json({ Error: "Not Authorized" });
@@ -82,6 +83,8 @@ async function delAuthenticate(req, res) {
     } catch (err) {
       res.status(500).json(err);
     }
+  } else {
+    res.status(400).json({ Error: "Please login / Sign up" });
   }
 }
 
@@ -93,10 +96,7 @@ async function postAuthenticate(req, res) {
     try {
       const user = await db.single_user(req.decoded.username);
       const { userId } = req.body;
-      if (
-        req.decoded.id === Number(userId) ||
-        req.decoded.username === "admin"
-      ) {
+      if (req.decoded.id === Number(userId) || req.decoded.role === "admin") {
         const newData = await sleepDb.addSleepData(req.body);
         res.status(201).json(newData);
       } else {
@@ -105,6 +105,8 @@ async function postAuthenticate(req, res) {
     } catch (err) {
       res.status(500).json(err);
     }
+  } else {
+    res.status(400).json({ Error: "Please login / Sign up" });
   }
 }
 
@@ -117,11 +119,8 @@ async function putAuthenticate(req, res) {
       const user = await db.single_user(req.decoded.username);
       const { id } = req.params;
       const { userID } = req.body;
-      if (
-        req.decoded.id === Number(userID) ||
-        req.decoded.username === "admin"
-      ) {
-        const updatedSleepData = await sleepDb.updateData(id, req.body);
+      if (req.decoded.id === Number(userID) || req.decoded.role === "admin") {
+        const updatedSleepData = await sleepDb.updateData(Number(id), req.body);
         res.status(201).json(updatedSleepData);
       } else {
         res.status(400).json({ Error: "Unauthorized" });
@@ -129,6 +128,8 @@ async function putAuthenticate(req, res) {
     } catch (err) {
       res.status(500).json(err);
     }
+  } else {
+    res.status(400).json({ Error: "Please login / Sign up" });
   }
 }
 
@@ -144,13 +145,14 @@ async function getAuthenticate(req, res) {
       if (req.decoded.id === Number(id)) {
         const theUser = { username: user.username, sleepData: data };
         res.status(200).json(theUser);
-      } else if (
-        req.decoded.username === "admin" &&
-        req.decoded.role === "admin"
-      ) {
-        const anotherUser = await db.single_user_by_id(req.params.id);
-        const userData = await sleepDb.getDataSingleUser(req.params.id);
-        res.status(200).json({ ...anotherUser, sleepData: userData });
+      } else if (req.decoded.role === "admin") {
+        const anotherUser = await db.single_user_by_id(Number(req.params.id));
+        const userData = await sleepDb.getDataSingleUser(Number(req.params.id));
+        if (anotherUser) {
+          res.status(200).json({ ...anotherUser, sleepData: userData });
+        } else {
+          res.status(400).json({ Error: "The user does not exist" });
+        }
       } else {
         res.status(400).json({ Error: "Unauthorized" });
       }
@@ -158,7 +160,7 @@ async function getAuthenticate(req, res) {
       res.status(500).json(err);
     }
   } else {
-    return res.status(401).json({});
+    return res.status(401).json({ Error: "Please login / Signup" });
   }
 }
 
@@ -202,13 +204,15 @@ async function editUserAuthenticate(req, res) {
         const hash = await createHash(password, 10);
         creds.password = hash;
         console.log(creds.username, creds.password);
-        const editedUser = await db.edit_user(id, creds);
+        const editedUser = await db.edit_user(Number(id), creds);
         console.log(editedUser);
         res.status(201).json(editedUser);
       } catch (err) {
         res.status(500).json(err);
       }
     }
+  } else {
+    res.status(400).json({ Error: "Please login / Sign up" });
   }
 }
 

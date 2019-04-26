@@ -21,7 +21,7 @@ function getSingleNight(id) {
 }
 
 function getDataSingleUser(id) {
-  return db("sleepData").where("userId", id);
+  return db("sleepData").where("userID", id);
 }
 
 function updateData(id, data) {

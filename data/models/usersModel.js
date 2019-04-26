@@ -31,7 +31,11 @@ function single_user_by_id(id) {
 }
 
 function add_user(user) {
-  return db("users").insert(user);
+  const newUser = {
+    username: user.username,
+    password: user.password
+  };
+  return db("users").insert(newUser);
 }
 
 function edit_user(id, user) {
