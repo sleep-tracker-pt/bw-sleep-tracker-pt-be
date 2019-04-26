@@ -43,7 +43,7 @@
 	3. accessible by the user and admin
 	4. On success returns the number of records deleted
 
-###Sleep Data
+### Sleep Data
 
 * /api/sleepData "POST"
   1. Posts new sleep data to the DB
@@ -67,7 +67,7 @@
 	3. accessible by the user and admin
 	4. On Success Returns the number of records deleted
 
-###Axios jwt
+### Axios jwt
 
 * const options = {
 		headers: {
