@@ -151,7 +151,7 @@ async function getAuthenticate(req, res) {
         if (anotherUser) {
           res.status(200).json({ ...anotherUser, sleepData: userData });
         } else {
-          res.status(400).jsone({ Error: "The user does not exist" });
+          res.status(400).json({ Error: "The user does not exist" });
         }
       } else {
         res.status(400).json({ Error: "Unauthorized" });
