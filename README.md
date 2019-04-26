@@ -55,16 +55,27 @@
 		* scale = emoji value, currently set for 1 - 4
 	3. JWT must be in the header under "authorize"
 	4. accessible by the user and admin
-	5. On success returns the added record
 * /api/sleepData/:id "PUT"
   1. Edits the recored matching the params: id
 	2. Takes a sleep data object {userID: , start: ,end: , hours: , scale}
 	3. JWT must be in the header under "authorize"
 	4. accessible by the user and admin
-	5. On success returns the edited record
+	5. On success returns number of edited records 
 * /api/sleepData/:id "DELETE"
   1. Deletes record that matches the params: id
 	2. JWT must be in the header under "authorize"
 	3. accessible by the user and admin
 	4. On Success Returns the number of records deleted
+
+###Axios jwt
+
+* const options = {
+		headers: {
+			authorize: "Returned Web Token"
+		}
+ }
+
+* const url = "https://sleeptrack.hero........"
+* axios.get(url, options).then(....)
+
 
