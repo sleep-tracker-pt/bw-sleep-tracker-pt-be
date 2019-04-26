@@ -219,6 +219,8 @@ async function editUserAuthenticate(req, res) {
 async function register(req, res) {
   const { username, password } = req.body;
   let creds = req.body;
+  console.log(username, password);
+  console.log(req.body.username);
   if (username && password) {
     try {
       const hash = await createHash(password, 10);
@@ -258,7 +260,8 @@ async function login(req, res) {
             expiresIn: "1d"
           };
           const token = await jwt.sign(payload, jwtKey, options);
-          res.status(200).json(token);
+          const obj = { token: token, id: user.id };
+          res.status(200).json(obj);
         } else {
           res.status(401).json({ Error: "Invalid Credentials" });
         }
