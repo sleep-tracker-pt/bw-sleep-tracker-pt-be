@@ -6,8 +6,8 @@ const sleepDb = require("../data/models/sleepDataModel.js");
 const helpers = require("../helpers/helpers.js");
 
 module.exports = {
-  createHash,
-  checkHash,
+  // createHash,
+  // checkHash,
   register,
   login,
   postAuthenticate,
@@ -95,8 +95,8 @@ async function postAuthenticate(req, res) {
     const verify = await helpers.jwtCheck(token, req, res);
     try {
       const user = await db.single_user(req.decoded.username);
-      const { userId } = req.body;
-      if (req.decoded.id === Number(userId) || req.decoded.role === "admin") {
+      const { userID } = req.body;
+      if (req.decoded.id === Number(userID) || req.decoded.role === "admin") {
         const newData = await sleepDb.addSleepData(req.body);
         res.status(201).json(newData);
       } else {
@@ -164,34 +164,6 @@ async function getAuthenticate(req, res) {
   }
 }
 
-async function createHash(pass, salt) {
-  try {
-    const newHash = await new Promise((res, rej) => {
-      bcrypt.hash(pass, salt, function(err, hash) {
-        if (err) rej(err);
-        res(hash);
-      });
-    });
-    return newHash;
-  } catch (err) {
-    console.log(err);
-  }
-}
-
-async function checkHash(pass, userPass) {
-  try {
-    const loginCheck = await new Promise((res, rej) => {
-      bcrypt.compare(pass, userPass, function(err, pass) {
-        if (err) rej(err);
-        res(pass);
-      });
-    });
-    return loginCheck;
-  } catch (err) {
-    console.log(err);
-  }
-}
-
 async function editUserAuthenticate(req, res) {
   const token = req.get("authorize");
   let creds = req.body;
@@ -201,7 +173,7 @@ async function editUserAuthenticate(req, res) {
     if (req.decoded.id === Number(id) || req.decoded.username === admin) {
       const { password, username } = req.body;
       try {
-        const hash = await createHash(password, 10);
+        const hash = await helpers.createHash(password, 10);
         creds.password = hash;
         console.log(creds.username, creds.password);
         const editedUser = await db.edit_user(Number(id), creds);
@@ -223,7 +195,7 @@ async function register(req, res) {
   console.log(req.body.username);
   if (username && password) {
     try {
-      const hash = await createHash(password, 10);
+      const hash = await helpers.createHash(password, 10);
       creds.password = hash;
       const userCheck = await db.single_user(username);
       if (userCheck) {
@@ -249,7 +221,7 @@ async function login(req, res) {
     try {
       const user = await db.single_user(username);
       if (user) {
-        const loginCheck = await checkHash(password, user.password);
+        const loginCheck = await helpers.checkHash(password, user.password);
         if (loginCheck === true) {
           const payload = {
             id: user.id,
