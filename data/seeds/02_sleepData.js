@@ -10,7 +10,9 @@ exports.seed = function(knex, Promise) {
   for (let i = 0; i < 100; i++) {
     const hoursNumber = randomNumber(5, 15);
     const userNumber = randomNumber(3, 23);
-    const scaleNumber = randomNumber(1, 5);
+    const bscaleNumber = randomNumber(1, 5);
+    const wscaleNumber = randomNumber(1, 5);
+    const ascaleNumber = randomNumber(1, 5);
     const time = moment();
     time.add(i, "d");
     const anotherTime = moment();
@@ -24,7 +26,9 @@ exports.seed = function(knex, Promise) {
       start: formatTime,
       end: formatAntherTime,
       hours: diff,
-      scale: scaleNumber
+      bed_t_rating: bscaleNumber,
+      work_t_rating: wscaleNumber,
+      average_rating: ascaleNumber
     };
     data.push(newObj);
   }

@@ -3,9 +3,9 @@ const bcrypt = require("bcryptjs");
 const jwtKey = process.env.JWT_SECRET || "testing";
 
 module.exports = {
-	jwtCheck,
-	createHash,
-	checkHash,
+  jwtCheck,
+  createHash,
+  checkHash
 };
 
 async function jwtCheck(tok, req, res) {

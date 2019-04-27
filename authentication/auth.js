@@ -6,8 +6,6 @@ const sleepDb = require("../data/models/sleepDataModel.js");
 const helpers = require("../helpers/helpers.js");
 
 module.exports = {
-  // createHash,
-  // checkHash,
   register,
   login,
   postAuthenticate,
@@ -103,7 +101,7 @@ async function postAuthenticate(req, res) {
         res.status(400).json({ Error: "Unauthorized" });
       }
     } catch (err) {
-      res.status(500).json(err);
+      res.status(500).json(err, req.body);
     }
   } else {
     res.status(400).json({ Error: "Please login / Sign up" });

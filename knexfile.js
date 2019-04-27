@@ -1,18 +1,19 @@
 // Update with your config settings.
+require("dotenv").config();
 
 module.exports = {
   development: {
-    client: "sqlite3",
-    connection: {
-      filename: "./data/dev.db"
-    },
+    client: "pg",
+    connection: process.env.HEROKU_POSTGRESQL_GRAY_URL,
+    ssl: true,
     migrations: {
       directory: "./data/migrations/"
     },
     seeds: {
       directory: "./data/seeds/"
     },
-    useNullAsDefault: true
+    useNullAsDefault: true,
+    pool: { min: 2, max: 10 }
   },
 
   production: {

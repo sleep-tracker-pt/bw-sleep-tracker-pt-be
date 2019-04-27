@@ -1,5 +1,5 @@
 const faker = require("faker");
-const createHash = require("../../authentication/auth.js").createHash;
+const createHash = require("../../helpers/helpers.js").createHash;
 const db = require("../models/usersModel.js");
 
 exports.seed = async function(knex, Promise) {
