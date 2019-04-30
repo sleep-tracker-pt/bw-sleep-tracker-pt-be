@@ -8,9 +8,12 @@
   "description": "api sleeptracker",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "cross-env DB_ENV=testing jest --watch --verbose",
     "start": "node index.js",
     "server": "nodemon index.js"
+  },
+  "jest": {
+    "testEnvironment": "node"
   },
   "repository": {
     "type": "git",
@@ -27,6 +30,7 @@
     "axios": "^0.18.0",
     "bcryptjs": "^2.4.3",
     "cors": "^2.8.5",
+    "cross-env": "^5.2.0",
     "dotenv": "^7.0.0",
     "express": "^4.16.4",
     "faker": "^4.1.0",
@@ -38,7 +42,8 @@
     "morgan": "^1.9.1",
     "pg": "^7.10.0",
     "sqlite3": "^4.0.6",
-    "string-strip-html": "^4.0.12"
+    "string-strip-html": "^4.0.12",
+    "supertest": "^4.0.2"
   },
   "devDependencies": {
     "nodemon": "^1.18.11"
