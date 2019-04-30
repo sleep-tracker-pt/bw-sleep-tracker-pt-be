@@ -40,7 +40,6 @@ function add_user(user) {
 }
 
 function edit_user(id, user) {
-  console.log(id);
   return db("users")
     .where("id", id)
     .update(user);

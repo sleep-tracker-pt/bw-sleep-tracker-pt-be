@@ -141,7 +141,7 @@ async function getAuthenticate(req, res) {
       const data = await sleepDb.getDataSingleUser(req.decoded.id);
       const { id } = req.params;
       if (req.decoded.id === Number(id)) {
-        const theUser = { username: user.username, sleepData: data };
+        const theUser = { ...user, sleepData: data };
         res.status(200).json(theUser);
       } else if (req.decoded.role === "admin") {
         const anotherUser = await db.single_user_by_id(Number(req.params.id));
