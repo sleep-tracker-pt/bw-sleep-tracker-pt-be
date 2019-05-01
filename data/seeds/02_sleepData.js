@@ -20,7 +20,7 @@ exports.seed = function(knex, Promise) {
     anotherTime.add(hoursNumber, "h");
     const diff = anotherTime.diff(time, "h");
     const formatTime = time.format("YYYY-M-D HH:mm");
-    const formatAntherTime = time.format("YYYY-M-D HH:mm");
+    const formatAntherTime = anotherTime.format("YYYY-M-D HH:mm");
     const newObj = {
       userID: userNumber,
       start: formatTime,

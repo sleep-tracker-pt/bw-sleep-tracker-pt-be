@@ -191,11 +191,9 @@ async function editUserAuthenticate(req, res) {
 }
 
 async function register(req, res) {
-  const { username, password } = req.body;
+  const { username, password, birthdate } = req.body;
   let creds = req.body;
-  console.log(username, password);
-  console.log(req.body.username);
-  if (username && password) {
+  if (username && password && birthdate) {
     try {
       const hash = await helpers.createHash(password, 10);
       creds.password = hash;
@@ -212,7 +210,9 @@ async function register(req, res) {
       res.status(err);
     }
   } else {
-    res.status(400).json({ Error: "The username and password are required" });
+    res
+      .status(422)
+      .json({ Error: "The username, password, and birthdate are required" });
   }
 }
 
@@ -246,6 +246,6 @@ async function login(req, res) {
       res.status(500).json(err);
     }
   } else {
-    res.status(400).json({ Error: "The username and password are required" });
+    res.status(422).json({ Error: "The username and password are required" });
   }
 }

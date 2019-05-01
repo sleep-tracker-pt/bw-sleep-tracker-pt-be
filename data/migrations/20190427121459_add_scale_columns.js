@@ -1,5 +1,5 @@
 exports.up = function(knex, Promise) {
-  return knex.schema.table("sleepData", tb => {
+  return knex.schema.table("sleepdata", tb => {
     tb.dropColumn("scale");
     tb.string("bed_t_rating");
     tb.string("work_t_rating");
@@ -8,7 +8,7 @@ exports.up = function(knex, Promise) {
 };
 
 exports.down = function(knex, Promise) {
-  return knex.schema.table("sleepData", tb => {
+  return knex.schema.table("sleepdata", tb => {
     tb.dropColumn("bed_t_rating");
     tb.dropColumn("work_t_rating");
     tb.dropColumn("average_rating");

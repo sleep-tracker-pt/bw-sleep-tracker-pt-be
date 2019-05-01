@@ -1,5 +1,5 @@
 exports.up = function(knex, Promise) {
-  return knex.schema.createTable("sleepData", tb => {
+  return knex.schema.createTable("sleepdata", tb => {
     tb.increments();
     tb.integer("userID")
       .unsigned()
@@ -15,5 +15,5 @@ exports.up = function(knex, Promise) {
 };
 
 exports.down = function(knex, Promise) {
-  return knex.dropTableIfExists("sleepData");
+  return knex.dropTableIfExists("sleepdata");
 };
