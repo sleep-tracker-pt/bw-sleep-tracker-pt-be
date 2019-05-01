@@ -33,10 +33,10 @@ exports.seed = function(knex, Promise) {
     data.push(newObj);
   }
   // Deletes ALL existing entries
-  return knex("sleepData")
+  return knex("sleepdata")
     .del()
     .then(function() {
       // Inserts seed entries
-      return knex("sleepData").insert(data);
+      return knex("sleepdata").insert(data);
     });
 };

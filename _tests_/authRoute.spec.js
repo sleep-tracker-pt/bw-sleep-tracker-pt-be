@@ -6,9 +6,6 @@ const mytruncate = async () => {
   await db.schema.raw("TRUNCATE TABLE users CASCADE");
   await db.schema.raw("TRUNCATE TABLE sleepdata CASCADE");
 };
-const seed = async () => {
-  await db("users").insert(tUsers);
-};
 
 beforeEach(() => {
   return mytruncate();
@@ -34,6 +31,20 @@ describe("server", () => {
         });
       expect(req.status).toBe(201);
       expect(req.type).toBe("application/json");
+    });
+    it("should set the role as 'users' even if it is sent in as admin", async () => {
+      const req = await request(server)
+        .post("/api/register")
+        .send({
+          username: "testing",
+          password: "testing",
+          birthdate: "04/05/1995",
+          role: "admin"
+        });
+      const newUser = await db("users")
+        .where("username", "testing")
+        .first();
+      expect(newUser.role).toEqual("user");
     });
     it("should return 400 if the username  isn't available", async () => {
       const newUser = {
