@@ -39,7 +39,7 @@
 	5. On success returns the edited record
 	6. checkpassword is required on the request.
 	  * checks the password for authenticity before submitting the request
-			* {
+		  * {
 					username: "example",
 					password: "example",
 					birthdate: "example",
