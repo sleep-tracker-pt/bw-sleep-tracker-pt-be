@@ -39,6 +39,17 @@
 	5. On success returns the edited record
 	6. checkpassword is required on the request.
 	  * checks the password for authenticity before submitting the request
+			* {
+					username: "example",
+					password: "example",
+					birthdate: "example",
+					checkpassword: "current password of user"
+			  }
+		* if username, password, or birthdate aren't changed, they don't need to be included in the request.
+			* {
+					birthdate: "example",
+					checkpassword: "current password of user"
+			  }
 		* need to logout user after a username or password change
 * /api/user/:id "DELETE"
   1. Deletes user that matches the params: id
