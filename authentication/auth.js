@@ -99,7 +99,7 @@ async function postAuthenticate(req, res) {
         const newData = await sleepDb.addSleepData(req.body);
         res.status(201).json(newData);
       } else {
-        res.status(400).json({ Error: "Unauthorized" });
+        res.status(401).json({ Error: "Unauthorized" });
       }
     } catch (err) {
       res.status(500).json(err, req.body);
@@ -119,10 +119,18 @@ async function putAuthenticate(req, res) {
       const { id } = req.params;
       const { userID } = req.body;
       if (req.decoded.id === Number(userID) || req.decoded.role === "admin") {
-        const updatedSleepData = await sleepDb.updateData(Number(id), req.body);
-        res.status(201).json(updatedSleepData);
+        const data = await sleepDb.getSingleNight(id);
+        if (data) {
+          const updatedSleepData = await sleepDb.updateData(
+            Number(id),
+            req.body
+          );
+          res.status(201).json(updatedSleepData);
+        } else {
+          res.status(400).json({ Error: "Night not found" });
+        }
       } else {
-        res.status(400).json({ Error: "Unauthorized" });
+        res.status(401).json({ Error: "Unauthorized" });
       }
     } catch (err) {
       res.status(500).json(err);
@@ -178,16 +186,14 @@ async function editUserAuthenticate(req, res) {
       try {
         const hash = await helpers.createHash(password, 10);
         creds.password = hash;
-        console.log(creds.username, creds.password);
         const editedUser = await db.edit_user(Number(id), creds);
-        console.log(editedUser);
         res.status(201).json(editedUser);
       } catch (err) {
         res.status(500).json(err);
       }
     }
   } else {
-    res.status(400).json({ Error: "Please login / Sign up" });
+    res.status(401).json({ Error: "Please login / Sign up" });
   }
 }
 

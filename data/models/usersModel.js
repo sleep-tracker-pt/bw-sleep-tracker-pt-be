@@ -39,8 +39,10 @@ function add_user(user) {
   return db("users").insert(newUser);
 }
 
-function edit_user(id, user) {
-  return db("users")
+async function edit_user(id, user) {
+  const editedUser = await db("users")
     .where("id", id)
     .update(user);
+  const users = await db("users");
+  console.log(users);
 }
