@@ -153,6 +153,7 @@ async function getAuthenticate(req, res) {
         const theUser = {
           username: user.username,
           birthdate: user.birthdate,
+          password: user.password,
           sleepData: data
         };
         res.status(200).json(theUser);
@@ -199,7 +200,8 @@ async function editUserAuthenticate(req, res) {
             dataToSend = { ...dataToSend, password: creds.password };
           }
           const editedUser = await db.edit_user(Number(id), dataToSend);
-          res.status(201).json(editedUser);
+          const returnedUser = await db.single_user_by_id(id);
+          res.status(201).json(returnedUser);
         } else {
           res.status(400).json({ Error: "Invalid Credentials" });
         }
