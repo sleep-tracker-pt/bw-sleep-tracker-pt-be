@@ -182,12 +182,27 @@ async function editUserAuthenticate(req, res) {
     const verify = await helpers.jwtCheck(token, req, res);
     const { id } = req.params;
     if (req.decoded.id === Number(id) || req.decoded.username === admin) {
-      const { password, username } = req.body;
       try {
-        const hash = await helpers.createHash(password, 10);
-        creds.password = hash;
-        const editedUser = await db.edit_user(Number(id), creds);
-        res.status(201).json(editedUser);
+        const { password, username, checkpassword } = req.body;
+        const user = await db.single_user_by_id(id);
+        const passCheck = await helpers.checkHash(checkpassword, user.password);
+        if (passCheck === true) {
+          if (password) {
+            const hash = await helpers.createHash(password, 10);
+            creds.password = hash;
+          }
+          let dataToSend = {
+            username: creds.username || user.username,
+            birthdate: creds.birthdate || user.birthdate
+          };
+          if (creds.password) {
+            dataToSend = { ...dataToSend, password: creds.password };
+          }
+          const editedUser = await db.edit_user(Number(id), dataToSend);
+          res.status(201).json(editedUser);
+        } else {
+          res.status(400).json({ Error: "Invalid Credentials" });
+        }
       } catch (err) {
         res.status(500).json(err);
       }
