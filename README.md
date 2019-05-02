@@ -39,7 +39,7 @@
 	5. On success returns the edited record
 	6. checkpassword is required on the request.
 	  * checks the password for authenticity before submitting the request
-		* need to logout user after such request
+		* need to logout user after a username or password change
 * /api/user/:id "DELETE"
   1. Deletes user that matches the params: id
 	2. JWT must be in the header under "authorize"
