@@ -40,9 +40,7 @@ function add_user(user) {
 }
 
 async function edit_user(id, user) {
-  const editedUser = await db("users")
+  return await db("users")
     .where("id", id)
     .update(user);
-  const users = await db("users");
-  console.log(users);
 }
