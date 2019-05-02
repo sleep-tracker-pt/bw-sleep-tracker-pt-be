@@ -9,27 +9,27 @@ module.exports = {
 };
 
 function delNight(id) {
-  return db("sleepData")
+  return db("sleepdata")
     .where("id", id)
     .del();
 }
 
 function getSingleNight(id) {
-  return db("sleepData")
+  return db("sleepdata")
     .where("id", id)
     .first();
 }
 
 function getDataSingleUser(id) {
-  return db("sleepData").where("userID", id);
+  return db("sleepdata").where("userID", id);
 }
 
 function updateData(id, data) {
-  return db("sleepData")
+  return db("sleepdata")
     .where("id", id)
     .update(data);
 }
 
 function addSleepData(data) {
-  return db("sleepData").insert(data);
+  return db("sleepdata").insert(data);
 }

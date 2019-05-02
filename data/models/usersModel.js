@@ -33,13 +33,13 @@ function single_user_by_id(id) {
 function add_user(user) {
   const newUser = {
     username: user.username,
-    password: user.password
+    password: user.password,
+    birthdate: user.birthdate
   };
   return db("users").insert(newUser);
 }
 
 function edit_user(id, user) {
-  console.log(id);
   return db("users")
     .where("id", id)
     .update(user);

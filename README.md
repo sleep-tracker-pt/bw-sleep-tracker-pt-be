@@ -7,8 +7,8 @@
 * /api/register "POST"
 	1. Registers a new user to the database
   2. Takes an object with properties "username", "password"
-	  * {username: "lorem", password: "lorem"}
-	  * both are required
+	  * {username: "lorem", password: "lorem", birthdate: "Standard Date such as 'new Date()'" }
+	  * all three are required
 * /api/login "POST"
   1. Login existing user. Returns the web token. 
 	2. Takes an object with properties "username", "password"

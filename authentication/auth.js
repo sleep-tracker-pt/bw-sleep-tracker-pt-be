@@ -1,3 +1,4 @@
+require("dotenv").config();
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 const jwtKey = process.env.JWT_SECRET || "testing";
@@ -6,8 +7,6 @@ const sleepDb = require("../data/models/sleepDataModel.js");
 const helpers = require("../helpers/helpers.js");
 
 module.exports = {
-  createHash,
-  checkHash,
   register,
   login,
   postAuthenticate,
@@ -95,15 +94,15 @@ async function postAuthenticate(req, res) {
     const verify = await helpers.jwtCheck(token, req, res);
     try {
       const user = await db.single_user(req.decoded.username);
-      const { userId } = req.body;
-      if (req.decoded.id === Number(userId) || req.decoded.role === "admin") {
+      const { userID } = req.body;
+      if (req.decoded.id === Number(userID) || req.decoded.role === "admin") {
         const newData = await sleepDb.addSleepData(req.body);
         res.status(201).json(newData);
       } else {
         res.status(400).json({ Error: "Unauthorized" });
       }
     } catch (err) {
-      res.status(500).json(err);
+      res.status(500).json(err, req.body);
     }
   } else {
     res.status(400).json({ Error: "Please login / Sign up" });
@@ -143,7 +142,11 @@ async function getAuthenticate(req, res) {
       const data = await sleepDb.getDataSingleUser(req.decoded.id);
       const { id } = req.params;
       if (req.decoded.id === Number(id)) {
-        const theUser = { username: user.username, sleepData: data };
+        const theUser = {
+          username: user.username,
+          birthdate: user.birthdate,
+          sleepData: data
+        };
         res.status(200).json(theUser);
       } else if (req.decoded.role === "admin") {
         const anotherUser = await db.single_user_by_id(Number(req.params.id));
@@ -164,34 +167,6 @@ async function getAuthenticate(req, res) {
   }
 }
 
-async function createHash(pass, salt) {
-  try {
-    const newHash = await new Promise((res, rej) => {
-      bcrypt.hash(pass, salt, function(err, hash) {
-        if (err) rej(err);
-        res(hash);
-      });
-    });
-    return newHash;
-  } catch (err) {
-    console.log(err);
-  }
-}
-
-async function checkHash(pass, userPass) {
-  try {
-    const loginCheck = await new Promise((res, rej) => {
-      bcrypt.compare(pass, userPass, function(err, pass) {
-        if (err) rej(err);
-        res(pass);
-      });
-    });
-    return loginCheck;
-  } catch (err) {
-    console.log(err);
-  }
-}
-
 async function editUserAuthenticate(req, res) {
   const token = req.get("authorize");
   let creds = req.body;
@@ -201,7 +176,7 @@ async function editUserAuthenticate(req, res) {
     if (req.decoded.id === Number(id) || req.decoded.username === admin) {
       const { password, username } = req.body;
       try {
-        const hash = await createHash(password, 10);
+        const hash = await helpers.createHash(password, 10);
         creds.password = hash;
         console.log(creds.username, creds.password);
         const editedUser = await db.edit_user(Number(id), creds);
@@ -217,11 +192,11 @@ async function editUserAuthenticate(req, res) {
 }
 
 async function register(req, res) {
-  const { username, password } = req.body;
+  const { username, password, birthdate } = req.body;
   let creds = req.body;
-  if (username && password) {
+  if (username && password && birthdate) {
     try {
-      const hash = await createHash(password, 10);
+      const hash = await helpers.createHash(password, 10);
       creds.password = hash;
       const userCheck = await db.single_user(username);
       if (userCheck) {
@@ -236,7 +211,9 @@ async function register(req, res) {
       res.status(err);
     }
   } else {
-    res.status(400).json({ Error: "The username and password are required" });
+    res
+      .status(422)
+      .json({ Error: "The username, password, and birthdate are required" });
   }
 }
 
@@ -247,7 +224,7 @@ async function login(req, res) {
     try {
       const user = await db.single_user(username);
       if (user) {
-        const loginCheck = await checkHash(password, user.password);
+        const loginCheck = await helpers.checkHash(password, user.password);
         if (loginCheck === true) {
           const payload = {
             id: user.id,
@@ -258,7 +235,8 @@ async function login(req, res) {
             expiresIn: "1d"
           };
           const token = await jwt.sign(payload, jwtKey, options);
-          res.status(200).json(token);
+          const obj = { token: token, id: user.id };
+          res.status(200).json(obj);
         } else {
           res.status(401).json({ Error: "Invalid Credentials" });
         }
@@ -269,6 +247,6 @@ async function login(req, res) {
       res.status(500).json(err);
     }
   } else {
-    res.status(400).json({ Error: "The username and password are required" });
+    res.status(422).json({ Error: "The username and password are required" });
   }
 }
