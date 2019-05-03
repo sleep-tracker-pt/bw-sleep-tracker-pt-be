@@ -99,7 +99,7 @@ async function postAuthenticate(req, res) {
         const newData = await sleepDb.addSleepData(req.body);
         res.status(201).json(newData);
       } else {
-        res.status(400).json({ Error: "Unauthorized" });
+        res.status(401).json({ Error: "Unauthorized" });
       }
     } catch (err) {
       res.status(500).json(err, req.body);
@@ -119,10 +119,18 @@ async function putAuthenticate(req, res) {
       const { id } = req.params;
       const { userID } = req.body;
       if (req.decoded.id === Number(userID) || req.decoded.role === "admin") {
-        const updatedSleepData = await sleepDb.updateData(Number(id), req.body);
-        res.status(201).json(updatedSleepData);
+        const data = await sleepDb.getSingleNight(id);
+        if (data) {
+          const updatedSleepData = await sleepDb.updateData(
+            Number(id),
+            req.body
+          );
+          res.status(201).json(updatedSleepData);
+        } else {
+          res.status(400).json({ Error: "Night not found" });
+        }
       } else {
-        res.status(400).json({ Error: "Unauthorized" });
+        res.status(401).json({ Error: "Unauthorized" });
       }
     } catch (err) {
       res.status(500).json(err);
@@ -145,6 +153,7 @@ async function getAuthenticate(req, res) {
         const theUser = {
           username: user.username,
           birthdate: user.birthdate,
+          password: user.password,
           sleepData: data
         };
         res.status(200).json(theUser);
@@ -174,20 +183,34 @@ async function editUserAuthenticate(req, res) {
     const verify = await helpers.jwtCheck(token, req, res);
     const { id } = req.params;
     if (req.decoded.id === Number(id) || req.decoded.username === admin) {
-      const { password, username } = req.body;
       try {
-        const hash = await helpers.createHash(password, 10);
-        creds.password = hash;
-        console.log(creds.username, creds.password);
-        const editedUser = await db.edit_user(Number(id), creds);
-        console.log(editedUser);
-        res.status(201).json(editedUser);
+        const { password, username, checkpassword } = req.body;
+        const user = await db.single_user_by_id(id);
+        const passCheck = await helpers.checkHash(checkpassword, user.password);
+        if (passCheck === true) {
+          if (password) {
+            const hash = await helpers.createHash(password, 10);
+            creds.password = hash;
+          }
+          let dataToSend = {
+            username: creds.username || user.username,
+            birthdate: creds.birthdate || user.birthdate
+          };
+          if (creds.password) {
+            dataToSend = { ...dataToSend, password: creds.password };
+          }
+          const editedUser = await db.edit_user(Number(id), dataToSend);
+          const returnedUser = await db.single_user_by_id(id);
+          res.status(201).json(returnedUser);
+        } else {
+          res.status(400).json({ Error: "Invalid Credentials" });
+        }
       } catch (err) {
         res.status(500).json(err);
       }
     }
   } else {
-    res.status(400).json({ Error: "Please login / Sign up" });
+    res.status(401).json({ Error: "Please login / Sign up" });
   }
 }
 

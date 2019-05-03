@@ -39,8 +39,8 @@ function add_user(user) {
   return db("users").insert(newUser);
 }
 
-function edit_user(id, user) {
-  return db("users")
+async function edit_user(id, user) {
+  return await db("users")
     .where("id", id)
     .update(user);
 }
