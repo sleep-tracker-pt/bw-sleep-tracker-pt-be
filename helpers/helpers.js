@@ -90,6 +90,7 @@ async function blogPosts(req, res) {
       };
       return newPost;
     });
+    console.log(newData[0]);
     res.status(200).json(newData);
   } catch (err) {
     console.log(err);
@@ -99,6 +100,7 @@ async function blogPosts(req, res) {
 async function jwtCheck(tok, req, res) {
   jwt.verify(tok, jwtKey, (err, decoded) => {
     if (err) {
+      i;
       res.status(401).json(err);
     }
 

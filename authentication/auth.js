@@ -97,7 +97,8 @@ async function postAuthenticate(req, res) {
       const { userID } = req.body;
       if (req.decoded.id === Number(userID) || req.decoded.role === "admin") {
         const newData = await sleepDb.addSleepData(req.body);
-        res.status(201).json(newData);
+        const stateData = await sleepDb.getDataSingleUser(user.id);
+        res.status(201).json(stateData);
       } else {
         res.status(401).json({ Error: "Unauthorized" });
       }
