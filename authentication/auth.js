@@ -72,7 +72,10 @@ async function delAuthenticate(req, res) {
       if (night) {
         if (req.decoded.id === night.userID || req.decoded.role === "admin") {
           const del = await sleepDb.delNight(Number(id));
-          res.status(200).json(del);
+          const newData = await sleepDb.getDataSingleUser(
+            Number(req.decoded.id)
+          );
+          res.status(200).json(newData);
         } else {
           res.status(401).json({ Error: "Not Authorized" });
         }
