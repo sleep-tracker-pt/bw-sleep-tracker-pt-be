@@ -130,7 +130,6 @@ async function putAuthenticate(req, res) {
             req.body
           );
           const newData = await sleepDb.getDataSingleUser(userID);
-          console.log(newData);
           res.status(201).json(newData);
         } else {
           res.status(400).json({ Error: "Night not found" });

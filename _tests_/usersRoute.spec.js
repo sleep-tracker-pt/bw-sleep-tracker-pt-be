@@ -53,35 +53,38 @@ describe("users Router", () => {
     });
   });
   describe("api/user/:id GET", () => {
-    xit("should return a status of 401 if not logged in", async () => {
-      const user = await db("users");
-      const req = await request(server).get(`/api/user/${user[0].id}`);
-      expect(req.body).toEqual({ Error: "Please login / Signup" });
-      expect(req.status).toBe(401);
-    });
-    xit("should return status of 400 for any user that isn't that particular user or admin", async () => {
-      const user = await db("users");
-      const login = await request(server)
-        .post("/api/login")
-        .send({ username: "testing", password: "testing" });
-      const req = await request(server)
-        .get(`/api/user/${user[1].id}`)
-        .set("authorize", login.body.token);
-      expect(req.body).toEqual({ Error: "Unauthorized" });
-      expect(req.status).toBe(400);
-    });
-    xit("should return status 200 for authorized users", async () => {
-      const user = await db("users");
-      const login = await request(server)
-        .post("/api/login")
-        .send({ username: "testing", password: "testing" });
-      const req = await request(server)
-        .get(`/api/user/${user[0].id}`)
-        .set("authorize", login.body.token);
-      expect(req.body).toHaveProperty("username", user[0].username);
-      expect(req.body).toHaveProperty("birthdate");
-      expect(req.body).toHaveProperty("sleepdata", user[0].sleepdata);
-    });
+    "should return a status of 401 if not logged in",
+      async () => {
+        const user = await db("users");
+        const req = await request(server).get(`/api/user/${user[0].id}`);
+        expect(req.body).toEqual({ Error: "Please login / Signup" });
+        expect(req.status).toBe(401);
+      };
+    "should return status of 400 for any user that isn't that particular user or admin",
+      async () => {
+        const user = await db("users");
+        const login = await request(server)
+          .post("/api/login")
+          .send({ username: "testing", password: "testing" });
+        const req = await request(server)
+          .get(`/api/user/${user[1].id}`)
+          .set("authorize", login.body.token);
+        expect(req.body).toEqual({ Error: "Unauthorized" });
+        expect(req.status).toBe(400);
+      };
+    "should return status 200 for authorized users",
+      async () => {
+        const user = await db("users");
+        const login = await request(server)
+          .post("/api/login")
+          .send({ username: "testing", password: "testing" });
+        const req = await request(server)
+          .get(`/api/user/${user[0].id}`)
+          .set("authorize", login.body.token);
+        expect(req.body).toHaveProperty("username", user[0].username);
+        expect(req.body).toHaveProperty("birthdate");
+        expect(req.body).toHaveProperty("sleepdata", user[0].sleepdata);
+      };
   });
   describe("api/user/:id PUT", () => {
     it("should return 401 for non logged in users", async () => {
@@ -117,33 +120,36 @@ describe("users Router", () => {
     });
   });
   describe("api/user/:id DELETE", () => {
-    xit("should return 401 for users that are not admin or that particular user", async () => {
-      const user = await db("users");
-      const login = await request(server)
-        .post("/api/login")
-        .send({ username: "testing", password: "testing" });
-      const req = await request(server)
-        .del(`/api/user/${user[1].id}`)
-        .set("authorize", login.body.token);
-      expect(req.status).toBe(401);
-      expect(req.body).toEqual({ Error: "Not Authorized" });
-    });
-    xit("should return 400 for a non logged in user", async () => {
-      const user = await db("users");
-      const req = await request(server).del(`/api/user/${user[1].id}`);
-      expect(req.status).toBe(400);
-      expect(req.body).toEqual({ Error: "Please login / Sign up" });
-    });
-    xit("should return 200 and number of users deleted on success", async () => {
-      const user = await db("users");
-      const login = await request(server)
-        .post("/api/login")
-        .send({ username: "testing", password: "testing" });
-      const req = await request(server)
-        .del(`/api/user/${user[0].id}`)
-        .set("authorize", login.body.token);
-      expect(req.status).toBe(200);
-      expect(req.body).toBe(1);
-    });
+    "should return 401 for users that are not admin or that particular user",
+      async () => {
+        const user = await db("users");
+        const login = await request(server)
+          .post("/api/login")
+          .send({ username: "testing", password: "testing" });
+        const req = await request(server)
+          .del(`/api/user/${user[1].id}`)
+          .set("authorize", login.body.token);
+        expect(req.status).toBe(401);
+        expect(req.body).toEqual({ Error: "Not Authorized" });
+      };
+    "should return 400 for a non logged in user",
+      async () => {
+        const user = await db("users");
+        const req = await request(server).del(`/api/user/${user[1].id}`);
+        expect(req.status).toBe(400);
+        expect(req.body).toEqual({ Error: "Please login / Sign up" });
+      };
+    "should return 200 and number of users deleted on success",
+      async () => {
+        const user = await db("users");
+        const login = await request(server)
+          .post("/api/login")
+          .send({ username: "testing", password: "testing" });
+        const req = await request(server)
+          .del(`/api/user/${user[0].id}`)
+          .set("authorize", login.body.token);
+        expect(req.status).toBe(200);
+        expect(req.body).toBe(1);
+      };
   });
 });
