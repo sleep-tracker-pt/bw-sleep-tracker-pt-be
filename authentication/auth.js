@@ -72,7 +72,10 @@ async function delAuthenticate(req, res) {
       if (night) {
         if (req.decoded.id === night.userID || req.decoded.role === "admin") {
           const del = await sleepDb.delNight(Number(id));
-          res.status(200).json(del);
+          const newData = await sleepDb.getDataSingleUser(
+            Number(req.decoded.id)
+          );
+          res.status(200).json(newData);
         } else {
           res.status(401).json({ Error: "Not Authorized" });
         }
@@ -97,7 +100,8 @@ async function postAuthenticate(req, res) {
       const { userID } = req.body;
       if (req.decoded.id === Number(userID) || req.decoded.role === "admin") {
         const newData = await sleepDb.addSleepData(req.body);
-        res.status(201).json(newData);
+        const stateData = await sleepDb.getDataSingleUser(user.id);
+        res.status(201).json(stateData);
       } else {
         res.status(401).json({ Error: "Unauthorized" });
       }
@@ -125,7 +129,8 @@ async function putAuthenticate(req, res) {
             Number(id),
             req.body
           );
-          res.status(201).json(updatedSleepData);
+          const newData = await sleepDb.getDataSingleUser(userID);
+          res.status(201).json(newData);
         } else {
           res.status(400).json({ Error: "Night not found" });
         }

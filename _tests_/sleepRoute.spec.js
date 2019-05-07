@@ -270,7 +270,7 @@ describe("sleep Data route", () => {
       const newnights = await db("sleepdata")
         .where("userID", users[0].id)
         .first();
-      expect(delreq.body).toBe(1);
+      expect(delreq.body).toEqual([]);
       expect(newnights).toBeFalsy();
     });
   });
